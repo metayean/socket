@@ -4,7 +4,8 @@
 	<title>Desktop</title>
 </head>
 <body>
-<!-- <div id="user"></div> -->
+<div id="picture"></div>
+<div id="name"></div>
 
 <script src="http://localhost:8081/socket.io/socket.io.js"></script>
 <script>
@@ -14,11 +15,12 @@
 	if (socket !== undefined) {
 		socket.on('output',function(data){
 			console.log(data);
-			// document.getElementById('user').innerHTML = data[0].picture;
-			var div = document.createElement('div');
-					div.setAttribute('id','user');
-					document.body.appendChild(div);
-					document.getElementById('user').innerHTML =  '<img src="'+data[0].picture+'">';
+			// var pic = document.createElement('div');
+			// 		pic.setAttribute('id','picture');
+			// 		document.body.appendChild(pic);
+			// 		document.getElementById('picture').innerHTML =  '<img src="'+data[0].picture+'">';
+			document.getElementById('picture').innerHTML =  '<img src="'+data[0].picture+'">';
+			document.getElementById('name').innerHTML =  data[0].name;
 		});
 	}
 // '<img src="'+data[0].picture+'">'

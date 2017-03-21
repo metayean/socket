@@ -89,7 +89,12 @@
 	  	FB.logout(function(response) {
 			  console.log('logout');
 			  location.reload();
+			  socket.emit('input', {
+				id:"",
+				name:"สวัสดี",
+				picture:"http://upic.me/i/mq/0avatar.jpg"
 			});
+		});
 	  }
 	</script>
 

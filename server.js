@@ -13,6 +13,8 @@ app.get('/index',function(req,res){
 	res.sendFile(__dirname+"/index.html");
 });
 
+
+
 //connect mongodb
 mongo.connect('mongodb://localhost/app', function (err,db){
 	if(err) throw err;
@@ -26,8 +28,8 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 
 		socket.on('input',function(data){
 			var id = data.id,
-					name = data.name,
-					picture = data.picture;
+				name = data.name,
+				picture = data.picture;
 
 			console.log('data');
 			col.insert({token: id, name: name, picture: picture}, function (){
