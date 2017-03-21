@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>FB</title>
+</head>
+<body>
+	<div id="status"></div>
+	<div id="profile"></div>
+	<button onclick="login()" id="login">Login</button>
+	<button onclick="logout()" id="login">Logout</button>
+
+<script src="http://localhost:8081/socket.io/socket.io.js"></script>
+	<script>
+	var socket = io.connect('http://localhost:8081');
+
+		window.fbAsyncInit = function() {
+	    FB.init({
+	      appId      : '235734090227419',
+	      xfbml      : true,
+	      version    : 'v2.8'
+	    });
+	    FB.getLoginStatus(function(response){
+	    	if (response.status ==='connected') {
+	    		FB.api('/me','GET',{fields: 'id,name,picture.width(150).height(150)'}, function(response) {
+	  			// console.log(response);
+	  			
+	  			//send data to serve
+	  			socket.emit('input', {
+							id:response.id,
+							name:response.name,
+							picture:response.picture.data.url
+						});
+
+	  			//data form server
+	  			socket.on('output',function(data){
+						console.log(data);
+						document.getElementById('profile').innerHTML = data[0].id;
+					});
+
+	  	});
+	    		document.getElementById("status").innerHTML = 'We are connected';
+	    	}
+	    	else if (response.status === 'not_authorized'){
+	    		document.getElementById("status").innerHTML = 'We are not connected';
+	    	}
+	    });
+	  };
+
+	  (function(d, s, id){
+	     var js, fjs = d.getElementsByTagName(s)[0];
+	     if (d.getElementById(id)) {return;}
+	     js = d.createElement(s); js.id = id;
+	     js.src = "//connect.facebook.net/en_US/sdk.js";
+	     fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+
+	  function login() {
+	  	FB.login(function(response){
+	  		if(response.status === 'connected') {
+	  			document.getElementById('status').innerHTML = 'We are connected';
+	  			FB.api('/me','GET',{fields: 'id,name,picture.width(150).height(150)'}, function(response) {
+	  			// console.log(response);
+	  			
+	  			//send data to serve
+	  			socket.emit('input', {
+							id:response.id,
+							name:response.name,
+							picture:response.picture.data.url
+						});
+
+	  			//data form server
+	  			socket.on('output',function(data){
+						console.log(data);
+						document.getElementById('profile').innerHTML = data[0].id;
+					});
+
+	  	});
+	  		}
+	  		else if (response.status === 'not_authorized') {
+	  			document.getElementById('status').innerHTML = 'We are not login';
+	  		}
+	  		else {
+	  			document.getElementById('status').innerHTML = 'We are not login';
+	  		}
+	  	},{scope: 'publish_actions'});
+	  }
+
+	  function logout(){
+	  	FB.logout(function(response) {
+			  console.log('logout');
+			});
+	  }
+	</script>
+
+</body>
+</html>

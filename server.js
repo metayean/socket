@@ -1,20 +1,47 @@
-var express = require('express');
-var app = express();
-var io = require('socket.io').sockets;
 var mongo = require('mongodb').MongoClient;
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
+
+server.listen(8081);
+//read file view
 app.get('/app',function(req,res){
-	res.sendFile(__dirname+"/"+"index.html");
+	res.sendFile(__dirname+"/mobile.html");
 });
-app.listen(8081);
+app.get('/index',function(req,res){
+	res.sendFile(__dirname+"/index.html");
+});
 
-
-mongo.connect('mongodb://127.0.0.1/app', function (err,db){
+//connect mongodb
+mongo.connect('mongodb://localhost/app', function (err,db){
 	if(err) throw err;
+	io.on('connection', function(socket){
 
-	console.log('hello');
+		var col  = db.collection('event');
+		col.find().sort({_id: 1}).toArray(function(err,res){
+			if(err) throw err;
+			socket.emit('output',res);
+		});
+
+		socket.on('input',function(data){
+			var id = data.id,
+					name = data.name,
+					picture = data.picture;
+
+			console.log('data');
+			col.insert({token: id, name: name, picture: picture}, function (){
+				console.log('Inserted');
+			});
+
+			io.emit('output',[data]);
+
+		});
+
+		console.log('hello');
 
 	});
+});
 
 
 // var express = require('express');
