@@ -15,10 +15,6 @@
 	if (socket !== undefined) {
 		socket.on('output',function(data){
 			console.log(data);
-			// var pic = document.createElement('div');
-			// 		pic.setAttribute('id','picture');
-			// 		document.body.appendChild(pic);
-			// 		document.getElementById('picture').innerHTML =  '<img src="'+data[0].picture+'">';
 			document.getElementById('picture').innerHTML =  '<img src="'+data[0].picture+'">';
 			document.getElementById('name').innerHTML =  data[0].name;
 		});

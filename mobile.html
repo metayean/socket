@@ -7,7 +7,7 @@
 	<div id="status"></div>
 	<div id="profile"></div>
 	<button onclick="login()" id="login">Login</button>
-	<button onclick="logout()" id="login">Logout</button>
+	<button onclick="logout()" id="logout">Logout</button>
 
 <script src="http://localhost:8081/socket.io/socket.io.js"></script>
 	<script>
@@ -19,32 +19,36 @@
 	      xfbml      : true,
 	      version    : 'v2.8'
 	    });
-	    FB.getLoginStatus(function(response){
-	    	if (response.status ==='connected') {
-	    		FB.api('/me','GET',{fields: 'id,name,picture.width(150).height(150)'}, function(response) {
-	  			// console.log(response);
-	  			
-	  			//send data to serve
-	  			socket.emit('input', {
-							id:response.id,
-							name:response.name,
-							picture:response.picture.data.url
-						});
 
-	  			//data form server
-	  			socket.on('output',function(data){
+	    FB.login(function(response){
+		  	if (response.status === 'connected') {
+		  		document.getElementById('status').innerHTML = "We are Connected";
+		  		document.getElementById('login').style.visibility = "hidden";
+		  		FB.api('/me','GET',{fields: 'id,name,picture.width(150).height(150)'}, function(response) {
+			  		
+			  		socket.emit('input', {
+						id:response.id,
+						name:response.name,
+						picture:response.picture.data.url
+					});
+					
+					socket.on('output',function(data){
 						console.log(data);
 						document.getElementById('profile').innerHTML = data[0].id;
 					});
+				});
+		  	} else if (response.status === 'not_authorized') {
+		  		document.getElementById('status').innerHTML = "We are Not Connected";
+		  	} else {
+		  		document.getElementById('status').innerHTML = "We are Not Connected";
+		  	}
+	  	},{scope: 'publish_actions'});
 
-	  	});
-	    		document.getElementById("status").innerHTML = 'We are connected';
-	    	}
-	    	else if (response.status === 'not_authorized'){
-	    		document.getElementById("status").innerHTML = 'We are not connected';
-	    	}
-	    });
 	  };
+	  console.log('hello');
+	  
+
+
 
 	  (function(d, s, id){
 	     var js, fjs = d.getElementsByTagName(s)[0];
@@ -70,11 +74,10 @@
 
 	  			//data form server
 	  			socket.on('output',function(data){
-						console.log(data);
 						document.getElementById('profile').innerHTML = data[0].id;
 					});
 
-	  	});
+	  			});
 	  		}
 	  		else if (response.status === 'not_authorized') {
 	  			document.getElementById('status').innerHTML = 'We are not login';
@@ -88,7 +91,8 @@
 	  function logout(){
 	  	FB.logout(function(response) {
 			  console.log('logout');
-			  location.reload();
+			  // location.reload();
+			  document.getElementById('login').style.visibility = "visible";
 			  socket.emit('input', {
 				id:"",
 				name:"สวัสดี",
