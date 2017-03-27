@@ -31,17 +31,24 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 			var token = data.id,
 				name = data.name,
 				picture = data.picture;
-
-			// console.log('data');
 			col.insert({token: token, name: name, picture: picture}, function (){
 				console.log('Inserted');
 			});
-
 			io.emit('output',[data]);
-			// console.log([data]);
 		});
 
 		console.log('hello');
+
+		socket.on('logout', function(data) {
+			console.log(data);
+			io.emit('logout',[data]);
+		});
+
+		socket.on('random', function(data) {
+			var arraynum = data.arraynum;
+			console.log(arraynum);
+			io.emit('output_random',arraynum);
+		});
 
 	});
 });

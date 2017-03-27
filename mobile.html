@@ -8,6 +8,7 @@
 	<div id="profile"></div>
 	<button onclick="login()" id="login">Login</button>
 	<button onclick="logout()" id="logout">Logout</button>
+	<button onclick="start()" id="start">Start</button>
 
 <script src="http://localhost:8081/socket.io/socket.io.js"></script>
 	<script>
@@ -93,12 +94,22 @@
 			  console.log('logout');
 			  // location.reload();
 			  document.getElementById('login').style.visibility = "visible";
-			  socket.emit('input', {
+			  socket.emit('logout', {
 				id:"",
 				name:"สวัสดี",
 				picture:"http://upic.me/i/mq/0avatar.jpg"
 			});
 		});
+	  }
+
+	  function start() {
+	  	var num1 = Math.floor((Math.random() * 3) + 1);
+	  	var num2 = Math.floor((Math.random() * 3) + 1);
+	  	var num3 = Math.floor((Math.random() * 3) + 1);
+	  	var arraynum = [num1,num2,num3];
+	  	console.log(arraynum);
+	  	socket.emit('random', {arraynum:arraynum});
+
 	  }
 	</script>
 
