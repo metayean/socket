@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" type="text/css" href="/main.css">
 	<title>Desktop</title>
 </head>
 <body>
 <div id="picture"></div>
 <div id="name"></div>
-<!-- <div id="random1"></div><div id="random2"></div><div id="random3"></div> -->
+<div class="slot-main">
+	<div class="slot-header"></div>
+	<div class="slot-content">
+		<div class="slot-content-left"></div>
+		<div class="reel0" id="reel0"></div>
+		<div class="reel1" id="reel1"></div>
+		<div class="reel2" id="reel2"></div>
+		<div class="slot-content-right"></div>
+	</div>
+	<div class="slot-footer"></div>
+</div>
+
+
 
 <script src="http://localhost:8081/socket.io/socket.io.js"></script>
 <script>
@@ -34,27 +47,18 @@
 			for(i=0;i<3;i++){
 				if (data[i]=='1'){
 					console.log('1');
-					var x = document.createElement("IMG");
-					x.src="http://www.suekayton.com/images/windows_7_logo.jpg";
-			    x.setAttribute("width", "150");
-			    x.setAttribute("height", "150");
-			    document.body.appendChild(x);
+					var link = 'http://www.suekayton.com/images/windows_7_logo.jpg';
+					document.getElementById('reel'+i).innerHTML = '<img src="'+ link +'" width="150" height="150">';
 				}//if
 				else if (data[i]=='2'){
 					console.log('2');
-					var x = document.createElement("IMG");
-					x.src="http://www.yousephtanha.com/blog/wp-content/uploads/2011/10/Ea-sports-logo.jpg";
-			    x.setAttribute("width", "150");
-			    x.setAttribute("height", "150");
-			    document.body.appendChild(x);
+					var link = 'http://www.yousephtanha.com/blog/wp-content/uploads/2011/10/Ea-sports-logo.jpg';
+					document.getElementById('reel'+i).innerHTML = '<img src="'+ link +'" width="150" height="150">';
 				}//else if
 				else if (data[i]=='3'){
 					console.log('3');
-					var x = document.createElement("IMG");
-					x.src="http://anynewcar.com.au/wp-content/uploads/2012/06/volkswagen-logo-5.jpg";
-			    x.setAttribute("width", "150");
-			    x.setAttribute("height", "150");
-			    document.body.appendChild(x);
+					var link = 'http://anynewcar.com.au/wp-content/uploads/2012/06/volkswagen-logo-5.jpg';
+					document.getElementById('reel'+i).innerHTML = '<img src="'+ link +'" width="150" height="150">';
 				}//else if
 			}//for
 
