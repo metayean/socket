@@ -3,6 +3,9 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var bodyParser = require('body-parser');
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
 app.use(express.static(__dirname + ''));
 
 
@@ -13,6 +16,12 @@ app.get('/app',function(req,res){
 });
 app.get('/index',function(req,res){
 	res.sendFile(__dirname+"/index.html");
+});
+app.get('/setting',function(req,res){
+	res.sendFile(__dirname+"/setting.html");
+});
+app.get('/setting/create',function(req,res){
+	res.sendFile(__dirname+"/create.html");
 });
 
 
@@ -33,7 +42,7 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 			var token = data.id,
 				name = data.name,
 				picture = data.picture;
-			col.insert({token: token, name: name, picture: picture}, function (){
+				col.insert({token: token, name: name, picture: picture}, function (){
 				console.log('Inserted');
 			});
 			io.emit('output',[data]);
@@ -53,6 +62,20 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 		});
 
 	});
+
+	var setting  = db.collection('setting');
+	app.post('/store_setting', urlencodedParser, function (req, res) {
+		var data = {
+			chance:req.body.chance,
+			num_reward:req.body.num_reward,
+			num_round:req.body.num_round,
+			image:req.body.img
+		}
+		setting.insert({chance:data.chance, num_reward:data.num_reward, num_round:data.num_round},function(){
+			res.redirect("/setting");
+		});
+	});
+
 });
 
 
