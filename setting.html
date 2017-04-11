@@ -29,16 +29,24 @@
 					<th>Action</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
+			<tbody id="chance_tr">
 			</tbody>
 		</table>
 	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+	<script type="text/javascript">
+		var socket = io.connect('http://localhost:8081');
+		socket.emit('setting');
+		socket.on('setting',function(data){
+			var tr = '<tr>'
+						+ '<td>'+ data[0].chance +'</td>'
+						+ '<td></td>'
+					 	+	'<td></td>'
+						+	'<td></td>'
+						+	'<td></td>'
+						+	'</tr>';
+			$('#chance_tr').html(tr);
+		});
+	</script>
 </body>
 </html>

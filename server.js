@@ -17,9 +17,7 @@ app.get('/app',function(req,res){
 app.get('/index',function(req,res){
 	res.sendFile(__dirname+"/index.html");
 });
-app.get('/setting',function(req,res){
-	res.sendFile(__dirname+"/setting.html");
-});
+
 app.get('/setting/create',function(req,res){
 	res.sendFile(__dirname+"/create.html");
 });
@@ -60,10 +58,20 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 			console.log(arraynum);
 			io.emit('output_random',arraynum);
 		});
-
+		
+		socket.on('setting', function(data) {
+				var setting  = db.collection('setting');
+					console.log(data);
+				setting.find().limit(100).sort({_id: 1}).toArray(function(err,res){
+						io.emit('setting',res);
+				});
+			});
 	});
 
+
+
 	var setting  = db.collection('setting');
+	
 	app.post('/store_setting', urlencodedParser, function (req, res) {
 		var data = {
 			chance:req.body.chance,
@@ -74,6 +82,13 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 		setting.insert({chance:data.chance, num_reward:data.num_reward, num_round:data.num_round},function(){
 			res.redirect("/setting");
 		});
+	});
+	app.get('/setting',function(req,res){
+		res.sendFile(__dirname+"/setting.html");
+		// setting.find().limit(100).sort({_id: 1}).toArray(function(err,res){
+		// 	io.emit('setting',res);
+		// 	console.log(res);
+		// });
 	});
 
 });
