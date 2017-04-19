@@ -102,16 +102,46 @@
 		});
 	  }
 
-	  function start() {
-	  	var num1 = Math.floor((Math.random() * 3) + 1);
-	  	var num2 = Math.floor((Math.random() * 3) + 1);
-	  	var num3 = Math.floor((Math.random() * 3) + 1);
-	  	var arraynum = [num1,num2,num3];
-	  	console.log(arraynum);
-	  	socket.emit('random', {arraynum:arraynum});
+	  // function start() {
+	  // 	var num1 = Math.floor((Math.random() * 3) + 1);
+	  // 	var num2 = Math.floor((Math.random() * 3) + 1);
+	  // 	var num3 = Math.floor((Math.random() * 3) + 1);
+	  // 	var arraynum = [num1,num2,num3];
+	  // 	console.log(arraynum);
+	  // 	socket.emit('random', {arraynum:arraynum});
 
-	  }
+	  // }
+
 	</script>
 
 </body>
 </html>
+<script>
+	function start(){
+	  	// console.log('start');
+	  	socket.emit('getdata_rand');
+	  	// console.log('emit');
+	  	socket.once('data_rand',function(data){
+	  		
+	  		var rand = Math.floor((Math.random() * 100) + 1);
+	  		console.log(rand);
+
+	  		for (var i = 0; i < data.length; i++) {
+	  			if (data[i].chance>=rand && data[i].num_reward>0) {
+		  			console.log(data[i].chance);
+		  			console.log('data'+i);
+		  			console.log(data[i].num_reward-1);
+		  			socket.emit('num_reward',data[i]);
+	  			}
+	  		}
+
+	  		// if (data[0].chance>=rand && data[0].num_reward>0) {
+	  		// 	console.log(data[0].chance);
+	  		// 	console.log('data1');
+	  		// } if (data[1].chance>=rand && data[1].num_reward>0) {
+	  		// 	console.log(data[1].chance);
+	  		// 	console.log('data2');
+	  		// }
+	  	});
+	  }
+</script>

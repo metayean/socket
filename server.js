@@ -1,10 +1,12 @@
 var mongo = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectID;
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
+app.set('view engine','ejs');
 
 app.use(express.static(__dirname + ''));
 
@@ -17,7 +19,6 @@ app.get('/app',function(req,res){
 app.get('/index',function(req,res){
 	res.sendFile(__dirname+"/index.html");
 });
-
 app.get('/setting/create',function(req,res){
 	res.sendFile(__dirname+"/create.html");
 });
@@ -26,15 +27,11 @@ app.get('/setting/create',function(req,res){
 
 //connect mongodb
 mongo.connect('mongodb://localhost/app', function (err,db){
+
 	if(err) throw err;
 	io.on('connection', function(socket){
 
 		var col  = db.collection('event');
-		// col.find().limit(100).sort({_id: 1}).toArray(function(err,res){
-		// 	if(err) throw err;
-		// 	socket.emit('output',res);
-		// 	// console.log(res);
-		// });
 
 		socket.on('input',function(data){
 			var token = data.id,
@@ -53,19 +50,23 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 			io.emit('logout',[data]);
 		});
 
-		socket.on('random', function(data) {
-			var arraynum = data.arraynum;
-			console.log(arraynum);
-			io.emit('output_random',arraynum);
-		});
-		
-		socket.on('setting', function(data) {
-				var setting  = db.collection('setting');
-					console.log(data);
-				setting.find().limit(100).sort({_id: 1}).toArray(function(err,res){
-						io.emit('setting',res);
-				});
+		// socket.on('random', function(data) {
+		// 	var arraynum = data.arraynum;
+		// 	console.log(arraynum);
+		// 	io.emit('output_random',arraynum);
+		// });
+		socket.on('getdata_rand',function(data){
+			setting.find().limit(100).toArray(function(err,res){
+				// console.log(res);
+				io.emit('data_rand',res);
+				console.log('yes');
 			});
+		});
+		socket.on('num_reward',function(data){
+			console.log(data.num_reward-1);
+			setting.updateOne({ "_id" : ObjectId(data._id)},{$set:{num_reward:data.num_reward-1}})
+		});
+
 	});
 
 
@@ -76,30 +77,27 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 		var data = {
 			chance:req.body.chance,
 			num_reward:req.body.num_reward,
-			num_round:req.body.num_round,
 			image:req.body.img
 		}
-		setting.insert({chance:data.chance, num_reward:data.num_reward, num_round:data.num_round},function(){
+		setting.insert({chance:data.chance, num_reward:data.num_reward},function(){
 			res.redirect("/setting");
 		});
 	});
+	
+	
 	app.get('/setting',function(req,res){
-		res.sendFile(__dirname+"/setting.html");
-		// setting.find().limit(100).sort({_id: 1}).toArray(function(err,res){
-		// 	io.emit('setting',res);
-		// 	console.log(res);
-		// });
+		setting.find().limit(100).toArray(function(err,item){
+			if (err) throw err;
+				res.render('setting',{data:item});
+		});
 	});
+	
 
+	app.get('/store_delete',function(req,res){
+		setting.remove({ "_id" : ObjectId(req.query._id) }, function(err, result) {
+			console.log('removed');
+			res.redirect("/setting");
+		});
+	});
 });
-
-
-// var express = require('express');
-// var app = express();
-
-// app.get('/app',function(req,res){
-// 	res.sendFile(__dirname+"/"+"index.html");
-// });
-// app.listen(8081);
-
 
