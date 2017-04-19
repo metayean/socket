@@ -72,7 +72,6 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 
 
 	var setting  = db.collection('setting');
-	
 	app.post('/store_setting', urlencodedParser, function (req, res) {
 		var data = {
 			chance:req.body.chance,
@@ -83,7 +82,6 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 			res.redirect("/setting");
 		});
 	});
-	
 	
 	app.get('/setting',function(req,res){
 		setting.find().limit(100).toArray(function(err,item){
@@ -99,5 +97,13 @@ mongo.connect('mongodb://localhost/app', function (err,db){
 			res.redirect("/setting");
 		});
 	});
+
+	var setting_round = db.collection('round');
+	app.get('/setting_round',function(req,res){
+		setting_round.insert({round:req.query.round}, function(err,result){
+			console.log(req.query.round);
+		});
+	});
+
 });
 
